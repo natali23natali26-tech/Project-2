@@ -1,18 +1,17 @@
 from typing import Optional
 
-
 class Vacancy:
     name: str
     url: str
     salary_from: Optional[int]
     salary_to: Optional[int]
-    work_format: str
+    work_format: list
 
     def __init__(
             self,
             name: str,
             url: str,
-            work_format: str,
+            work_format: list,
             salary_from: Optional[int] = None,
             salary_to: Optional[int]= None
     ):
@@ -32,9 +31,11 @@ class Vacancy:
             salary_range = f"от {self.salary_from}"
         else:
             salary_range = f"от {self.salary_from} до {self.salary_to}"
-        result = (f"Вакансия {self.name} c {self.url}, "
-                  f"зарплата {salary_range}, "
-                  f"формат работы {self.work_format}")
+        result = (f"Вакансия {self.name} "
+                  f"({self.url}), "
+                  f"зарплата: {salary_range}, "
+                  f"формат работы: {", ".join(self.work_format)}"
+                  )
         return result
 
     def __lt__(self, other: 'Vacancy') -> bool:
@@ -68,6 +69,36 @@ class Vacancy:
             "salary_to": self.salary_to
         }
 
+    @classmethod
+    def created_vacancy(cls, vacancy_data):
+
+        name = vacancy_data.get("name")
+        url = vacancy_data.get("'alternate_url'")
+        work_formats = []
+        for work_format in vacancy_data.get("work_format", []):
+            work_formats.append(work_format.get("name"))
+        salary_info = vacancy_data.get("salary", {})
+        if salary_info.get("currency") == "RUB":
+            salary_from = salary_info.get("from")
+            salary_to = salary_info.get("to")
+        else:
+            salary_from = None
+            salary_to = None
+        return cls(
+            name = name,
+            url = url,
+            work_format = work_formats,
+            salary_from = salary_from,
+            salary_to = salary_to
+        )
+
+    @classmethod
+    def cast_to_object_list(cls, vacancy_list):
+        result = []
+        for vac in vacancy_list:
+            result.append(cls.created_vacancy(vac))
+        return result
+
     @staticmethod
     def validate_vacancies(
             name: str,
@@ -84,3 +115,14 @@ class Vacancy:
         if not salary_to:
             salary_to = 0
         return {"name": name, "url": url, "salary_from": salary_from, "salary_to": salary_to}
+
+if __name__ == '__main__':
+    vacancy = Vacancy(
+        name = "разработчик",
+        url = "https://hh.ru/applicant/vacancy_response?vacancyId=129224803",
+        work_format = ["Удалённо"],
+        salary_from = 0,
+        salary_to = 100000
+    )
+    print(vacancy)
+    print(vacancy.to_dict())
