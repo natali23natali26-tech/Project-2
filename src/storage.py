@@ -124,7 +124,7 @@ class JsonSaver(AbstractJson):
         except (PermissionError, OSError) as e:
             print(f"Не удалось записать файл: {e}")
             return False
-        except (TypeError, ValueError) as e:  # Вместо JSONEncodeError
+        except (TypeError, ValueError) as e:
             print(f"Ошибка кодирования данных в JSON: {e}")
             return False
 
