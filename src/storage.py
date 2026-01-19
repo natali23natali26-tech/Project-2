@@ -90,7 +90,8 @@ class JsonSaver(AbstractJson):
                     existing.append(vacancy)
                     url_set.add(vacancy.url)
             with open(self.__filepath, "w", encoding="utf-8") as f:
-                json.dump([v.to_dict() for v in existing], f, ensure_ascii=False, indent=2)
+                json.dump([v.to_dict() for v in existing],
+                          f, ensure_ascii=False, indent=2)
             return True
         except (PermissionError, OSError) as e:
             print(f"Не удалось записать файл: {e}")
@@ -107,7 +108,8 @@ class JsonSaver(AbstractJson):
             data = self.read_data()
             filtered = [v for v in data if v.url != url]
             with open(self.__filepath, "w", encoding="utf-8") as f:
-                json.dump([v.to_dict() for v in filtered], f, ensure_ascii=False, indent=2)
+                json.dump([v.to_dict() for v in filtered],
+                          f, ensure_ascii=False, indent=2)
             return True
         except (PermissionError, OSError) as e:
             print(f"Не удалось удалить запись: {e}")
