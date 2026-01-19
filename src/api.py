@@ -107,10 +107,3 @@ class HeadHunterAPI(AbstractVacancyAPI):
         if not 0 <= per_page <= 100:
             raise ValueError('per_page должен быть в диапазоне от 0 до 100')
         return per_page
-
-# if __name__ == '__main__':
-#     hh_api = HeadHunterAPI(10)
-#     result = hh_api.get_vacancies('python')
-#     print(f"Найдено вакансий: {len(result)}")
-#     for vacancy in result[:5]:  # Выводим первые 5
-#         print(f"- {vacancy.get('name', 'Без названия')}")
