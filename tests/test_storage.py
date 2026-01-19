@@ -16,7 +16,11 @@ def temp_json_file(tmpdir):
 def test_read_data(temp_json_file):
     # Создаем тестовый файл
     test_data = [
-        {"name": "Test", "url": "test_url", "work_format": ["Remote"], "salary_from": 100, "salary_to": 200}
+        {"name": "Test",
+         "url": "test_url",
+         "work_format": ["Remote"],
+         "salary_from": 100,
+         "salary_to": 200}
     ]
     with open(temp_json_file, "w") as f:
         json.dump(test_data, f)

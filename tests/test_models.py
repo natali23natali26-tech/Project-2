@@ -2,6 +2,7 @@ import pytest
 from typing import List, Optional
 from src.models import Vacancy
 
+
 def test_vacancy_init_with_none_values():
     """Проверяет обработку None-значений внутри __init__."""
     name: Optional[str] = None
@@ -22,6 +23,7 @@ def test_vacancy_init_with_none_values():
     assert vacancy.salary_from == 0  # None → 0
     assert vacancy.salary_to == 0     # None → 0
 
+
 @pytest.mark.parametrize(
     "salary_from, salary_to, expected",
     [
@@ -41,6 +43,7 @@ def test_format_salary(salary_from, salary_to, expected):
         salary_from, salary_to
     )
     assert vacancy._format_salary() == expected
+
 
 def test_cast_to_object_list():
     """Проверяет преобразование списка словарей
@@ -76,6 +79,7 @@ def test_cast_to_object_list():
     assert vacancies[1].salary_from == 300
     assert vacancies[1].salary_to == 400
 
+
 def test_created_vacancy():
     """Проверяет создание вакансии из словаря (HH API)."""
     vacancy_data = {
@@ -97,6 +101,7 @@ def test_created_vacancy():
     assert "Permanent" in vacancy.work_format
     assert vacancy.salary_from == 100000
     assert vacancy.salary_to == 150000
+
 
 def test_medium_salary():
     """Проверяет расчёт средней зарплаты."""
