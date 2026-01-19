@@ -2,16 +2,13 @@ from src.api import HeadHunterAPI
 from src.models import Vacancy
 from src.storage import JsonSaver
 
+
 def user_interaction():
     """
     Функция взаимодействия с пользователем через консоль.
-    Позволяет:
-    - искать вакансии на hh.ru;
-    - показывать топ N по зарплате;
-    - фильтровать по ключевому слову в названии.
     """
-    hh_api = HeadHunterAPI(per_page=2)
-    saver = JsonSaver("vacancies.json")
+    hh_api = HeadHunterAPI(per_page=100)  # Увеличим per_page для эффективности
+    saver = JsonSaver("data/vacancies.json")
 
     print("Добро пожаловать в систему поиска вакансий!")
     while True:
@@ -29,19 +26,44 @@ def user_interaction():
                 print("Запрос не может быть пустым!")
                 continue
             try:
+                print(f"\nПоиск вакансий по запросу: '{query}'...")
                 raw_vacancies = hh_api.get_vacancies(query)
+
+                # Проверка результата
+                if raw_vacancies is None:
+                    print("Ошибка: API вернул None.")
+                    continue
+
                 if not raw_vacancies:
                     print("Вакансий не найдено.")
                     continue
+
+                print(f"Получено {len(raw_vacancies)} сырых вакансий от API")
+
                 # Преобразуем в объекты Vacancy
                 vacancies = Vacancy.cast_to_object_list(raw_vacancies)
+
+                # Проверяем результат преобразования
+                if not vacancies:
+                    print("Не удалось преобразовать ни одной вакансии.")
+                    continue
+
+                print(f"Успешно создано {len(vacancies)} объектов Vacancy")
+
                 # Сохраняем в файл
-                if saver.add_date(vacancies):
-                    print(f"Найдено {len(vacancies)} вакансий. Сохранено в файл.")
+                if saver.add_data(vacancies):  # Убедитесь что add_data, а не add_date!
+                    print(f"✓ Сохранено {len(vacancies)} вакансий в файл vacancies.json")
                 else:
-                    print("Ошибка при сохранении в файл.")
+                    print("✗ Ошибка при сохранении в файл.")
+
+            except AttributeError as e:
+                print(f"Ошибка атрибута: {e}")
+                import traceback
+                traceback.print_exc()
             except Exception as e:
-                print(f"Ошибка при запросе к API: {e}")
+                print(f"Ошибка: {e}")
+                import traceback
+                traceback.print_exc()
 
         elif choice == "2":
             try:
